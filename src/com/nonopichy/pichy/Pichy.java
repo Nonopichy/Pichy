@@ -2,9 +2,8 @@ package com.nonopichy.pichy;
 
 import com.nonopichy.pichy.sdk.pichysyntax.PichyOut;
 import com.nonopichy.pichy.sdk.pichysyntax.PichySyntax;
-import com.nonopichy.pichy.sdk.syntaxes.AlertBox;
-import com.nonopichy.pichy.sdk.syntaxes.Print;
-import com.nonopichy.pichy.sdk.syntaxes.WebSite;
+import com.nonopichy.pichy.sdk.pichysyntax.PichyType;
+import com.nonopichy.pichy.sdk.syntaxes.*;
 
 import java.io.*;
 import java.util.*;
@@ -29,6 +28,9 @@ public class Pichy {
         syntaxes.add(new AlertBox());
         syntaxes.add(new WebSite());
 
+        syntaxes.add(new MathPi());
+        syntaxes.add(new Address());
+
         while ((st = br.readLine()) != null){
             if(lastV != null){
                 lastV.append(st);
@@ -36,8 +38,22 @@ public class Pichy {
             // Execute break line
             if(lastN != null && st.length() > 0 && st.charAt(st.length()-1) == ';'){
                 String result = Objects.requireNonNull(removeLastCharRegex(lastV.toString()));
-                for (PichySyntax syntax : syntaxes) {
-                    syntax.playEffect(checkVariables(result));
+                if(type.equals("variable"))
+                    variables.put(lastN, result);
+                else {
+                    for (PichySyntax syntax : syntaxes) {
+                        if (type.equals(syntax.getName())) {
+                            System.out.println("-->" + result);
+                            System.out.println("-->" + checkVariables(result));
+
+                            if (syntax.getType() == PichyType.EFFECT) {
+                                syntax.playEffect(checkVariables(result));
+                            }
+                            if (syntax.getType() == PichyType.RETURN) {
+                                syntax.playReturn(checkVariables(result));
+                            }
+                        }
+                    }
                 }
                 /*
                 if (type.equals("variable")) {
@@ -68,8 +84,9 @@ public class Pichy {
             // Execute without break line
             st = checkVariables(st);
             for (PichySyntax syntax : syntaxes) {
-                if(syntax.prepareEffect(st) == PichyOut.EXECUTED.getOut())
+                if(syntax.prepareEffect(st) == PichyOut.EXECUTED.getOut()) {
                     break;
+                }
             }
             /*
 
@@ -147,8 +164,14 @@ public class Pichy {
 
     public static String checkVariables(String in){
         for (Map.Entry<String, Object> e : variables.entrySet()) {
-            if(in.contains(e.getKey()))
-                in = in.replaceAll(e.getKey(),String.valueOf(e.getValue()));
+            if(in.contains(e.getKey())) {
+                in = in.replaceAll(e.getKey(), String.valueOf(e.getValue()));
+            }
+        }
+        for (PichySyntax syntax : syntaxes) {
+            if(syntax.getType() == PichyType.RETURN &&
+                    in.contains("->@"+syntax.getName()))
+                in = in.replaceAll("->@"+syntax.getName(), String.valueOf(syntax.playReturn(in)));
         }
         return in;
     }

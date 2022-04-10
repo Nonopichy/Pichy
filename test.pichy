@@ -1,4 +1,6 @@
-@msg = Posso te mostrar algo interessante?;
+@msg = Posso te mostrar algo interessante?
+Olha o PI ->@3.1415
+Olha seu IP ->@machine-ip
+OIDQJLKJDQLK;
 @web = https://nonopichy.github.io;
 alertbox @msg;
-website @web;

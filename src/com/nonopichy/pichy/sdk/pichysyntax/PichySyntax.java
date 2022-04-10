@@ -13,7 +13,10 @@ public interface PichySyntax {
             return PichyOut.BREAK_LINE.getOut();
         if(treat.equals("%-next"))
             return PichyOut.NEXT.getOut();
-        playEffect(Pichy.result);
+        if(getType() == PichyType.EFFECT)
+            playEffect(Pichy.result);
+        else
+            playReturn(Pichy.result);
         return PichyOut.EXECUTED.getOut();
     }
 
@@ -32,8 +35,9 @@ public interface PichySyntax {
             Pichy.lastN = "";
             return null;
         } else {
-            Pichy.type = "";
-            return Pichy.result = Pichy.removeLastCharRegex(Pichy.st);
+            Pichy.type = "";;
+            Pichy.result = Pichy.removeLastCharRegex(Pichy.st);
+            return  Pichy.result;
         }
     }
 
