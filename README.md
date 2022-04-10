@@ -1,6 +1,6 @@
 # Pichy 1.0-BETA
 - My Programming Language.
-- Relax, I'm going to change this code a lot... I know it's messed up.
+- ~~Relax, I'm going to change this code a lot... I know it's messed up.~~
 ## Define variable
 ```
 @variable-name = value;
