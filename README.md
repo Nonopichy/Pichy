@@ -5,22 +5,26 @@
 ```
 @variable-name = value;
 ```
-- > @variable-name = "text; (string)
-- > @variable-name = value; (object)
+- > @variable-name = text; (string)
 - > @variable-name = 1; (double)
-- > @variable-name++; (double) #add 1 to variable
-- > @variable-name--; (double) #remove 1 from variable
 
 ## Display in console
 ```
 print value;
 ```
 - > print @variable;
-## Instantiate a class via arguments
+
+## Open alert box
 ```
-instance-class-arg com.nonopichy.pichy.Pichy:arg-one/arg-two/;
+alertbox value;
 ```
-- > instance-class-arg class:arg/;
+- > alertbox @variable;
+
+## Open website
+```
+website value;
+```
+- > website @variable;
 
 ## Code from SRC
 
