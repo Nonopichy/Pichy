@@ -1,1 +1,4 @@
-print Ixi nosso X abaixo okkkkhjkvalor agora é @x;
+@msg = Posso te mostrar algo interessante?;
+@web = https://nonopichy.github.io;
+alertbox @msg;
+website @web;

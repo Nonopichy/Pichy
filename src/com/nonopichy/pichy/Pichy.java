@@ -2,13 +2,12 @@ package com.nonopichy.pichy;
 
 import com.nonopichy.pichy.sdk.pichysyntax.PichyOut;
 import com.nonopichy.pichy.sdk.pichysyntax.PichySyntax;
+import com.nonopichy.pichy.sdk.syntaxes.AlertBox;
 import com.nonopichy.pichy.sdk.syntaxes.Print;
+import com.nonopichy.pichy.sdk.syntaxes.WebSite;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Pichy {
 
@@ -27,13 +26,16 @@ public class Pichy {
         BufferedReader br = new BufferedReader(new FileReader(file));
 
         syntaxes.add(new Print());
+        syntaxes.add(new AlertBox());
+        syntaxes.add(new WebSite());
 
         while ((st = br.readLine()) != null){
             if(lastV != null){
                 lastV.append(st);
             }
-            if(lastN != null && st.charAt(st.length()-1) == ';'){
-                String result = removeLastCharRegex(lastV.toString());
+            // Execute break line
+            if(lastN != null && st.length() > 0 && st.charAt(st.length()-1) == ';'){
+                String result = Objects.requireNonNull(removeLastCharRegex(lastV.toString()));
                 for (PichySyntax syntax : syntaxes) {
                     syntax.playEffect(checkVariables(result));
                 }
@@ -61,89 +63,16 @@ public class Pichy {
                 lastV = null;
                 type = "";
             }
+
+            defineVariable();
+            // Execute without break line
+            st = checkVariables(st);
             for (PichySyntax syntax : syntaxes) {
                 if(syntax.prepareEffect(st) == PichyOut.EXECUTED.getOut())
                     break;
             }
             /*
-            if(st.charAt(0) == '@'){
-                type = "variable";
-                String[] split = st.split(" ");
-                String v_name = split[0];
-                if(st.contains(v_name+" = ")) {
-                    st = st.replaceAll(v_name + " = ", "");
-                    if (st.charAt(0) == '"') {
-                        st = st.replaceFirst("\"", "");
-                    }
-                    if (st.charAt(st.length() - 1) != ';') {
-                        lastV = new StringBuilder(st);
-                        lastN = v_name;
-                    } else {
-                        st = removeLastCharRegex(st);
-                        String a = st;
-                        try{
-                            if(st.contains("instance-class-arg")){
-                                type = "instance-class-arg";
-                                st = st.replaceFirst("instance-class-arg ", "");
-                                for (Map.Entry<String, Object> e : variables.entrySet()) {
-                                    if(st.contains(e.getKey()))
-                                        st = st.replaceAll(e.getKey(),String.valueOf(e.getValue()));
-                                }
 
-                                    st = removeLastCharRegex(st);
-
-                                    String[] info = st.split(":")[1].split("/");
-
-
-                                        Constructor[] ctors =  Class.forName(st.split(":")[0]).getDeclaredConstructors();
-                                        Constructor ctor = null;
-                                        for (int i = 0; i < ctors.length; i++) {
-                                            ctor = ctors[i];
-                                            if (ctor.getGenericParameterTypes().length == 0)
-                                                break;
-                                        }
-                                        variables.put(v_name, ctor.newInstance(info));
-
-                            } else {
-                                st = a;
-
-                                try {
-                                    variables.put(v_name, Double.parseDouble(st));
-                                } catch (NumberFormatException p) {
-                                    try {
-                                        variables.put(v_name, Boolean.parseBoolean(st));
-                                    } finally {
-                                        variables.put(v_name, st);
-                                    }
-                                }
-
-                            }
-                        }catch (Exception e){
-
-                        }
-
-                    }
-                } else if(st.contains("++")){
-                    try {
-                        v_name = v_name.replaceAll("\\+\\+", "");
-                        double var = (double) isVariable(v_name);
-                        variables.put(v_name, var + 1);
-                    }catch (Exception e){
-
-                    }
-                    type = "";
-
-                }else if(st.contains("--")){
-                    try {
-                    v_name = v_name.replaceAll("--","");
-                    double var = (double) isVariable(v_name);
-                    variables.put(v_name, var-1);
-                }catch (Exception e){
-
-                }
-                    type = "";
-                }
-            }
             if(st.startsWith("print")){
                 type = "print";
                 st = st.replaceFirst("print ", "");
@@ -192,10 +121,30 @@ public class Pichy {
         }
     }
 
-    public Pichy(String a, String b){
-        System.out.println("a >"+a);
-        System.out.println("b >"+b);
+    public static void defineVariable(){
+        if(st.charAt(0) != '@')
+            return;
+        type = "variable";
+        String[] split = st.split(" ");
+        String v_name = split[0];
+        if(st.contains(v_name+" = ")) {
+            st = st.replaceAll(v_name + " = ", "");
+            if (st.charAt(0) == '"')
+                st = st.replaceFirst("\"", "");
+            if (st.charAt(st.length() - 1) != ';') {
+                lastV = new StringBuilder(st);
+                lastN = v_name;
+            } else {
+                st = checkVariables(removeLastCharRegex(st));
+                try{
+                    variables.put(v_name, Double.parseDouble(st));
+                }catch (Exception a){
+                    variables.put(v_name, st);
+                }
+            }
+        }
     }
+
     public static String checkVariables(String in){
         for (Map.Entry<String, Object> e : variables.entrySet()) {
             if(in.contains(e.getKey()))
@@ -203,9 +152,11 @@ public class Pichy {
         }
         return in;
     }
+
     public static Object isVariable(String key){
         return variables.get(key);
     }
+
     public static String removeLastCharRegex(String s) {
         return (s == null) ? null : s.replaceAll(".$", "");
     }
