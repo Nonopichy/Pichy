@@ -8,40 +8,40 @@
 - > @variable-name = text; (string)
 - > @variable-name = 1; (double)
 
-# Effects
+## Effects
 
-## Display in console
+### Display in console
 ```
 print value;
 ```
 - > print @variable;
 
-## Open alert box
+### Open alert box
 ```
 alertbox value;
 ```
 - > alertbox @variable;
 
-## Open website
+### Open website
 ```
 website value;
 ```
 - > website @variable;
 
-# Returns
+## Returns
 
-## Get math PI
+### Get math PI
 ```
 3.1415;
 ```
 - > ->@3.1415;
 
-## Get address machine
+### Get address machine
 ```
 machine-ip;
 ```
 - > ->@machine-ip;
 
-## Code from SRC
+### Code from SRC
 
 https://github.com/Nonopichy/Pichy/blob/master/test.pichy#L1-L6
