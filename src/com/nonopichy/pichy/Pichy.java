@@ -1,27 +1,43 @@
 package com.nonopichy.pichy;
 
+import com.nonopichy.pichy.sdk.pichysyntax.PichyOut;
+import com.nonopichy.pichy.sdk.pichysyntax.PichySyntax;
+import com.nonopichy.pichy.sdk.syntaxes.Print;
+
 import java.io.*;
-import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Pichy {
 
     public static final HashMap<String, Object> variables = new HashMap<>();
+    public static final List<PichySyntax> syntaxes = new ArrayList<>();
+
+    public static String result;
+    public static String st;
+    public static String lastN = null;
+    public static StringBuilder lastV = null;
+    public static String type = "";
 
     public static <T> void main(String[] args) throws IOException {
+
         File file = new File("test.pichy");
         BufferedReader br = new BufferedReader(new FileReader(file));
-        String st;
-        String lastN = null;
-        StringBuilder lastV = null;
-        String type = "";
+
+        syntaxes.add(new Print());
+
         while ((st = br.readLine()) != null){
             if(lastV != null){
                 lastV.append(st);
             }
             if(lastN != null && st.charAt(st.length()-1) == ';'){
                 String result = removeLastCharRegex(lastV.toString());
+                for (PichySyntax syntax : syntaxes) {
+                    syntax.playEffect(checkVariables(result));
+                }
+                /*
                 if (type.equals("variable")) {
                     try {
                         variables.put(lastN, Double.parseDouble(result));
@@ -39,10 +55,17 @@ public class Pichy {
                     }
                     System.out.println(result);
                 }
+
+                 */
                 lastN = null;
                 lastV = null;
                 type = "";
             }
+            for (PichySyntax syntax : syntaxes) {
+                if(syntax.prepareEffect(st) == PichyOut.EXECUTED.getOut())
+                    break;
+            }
+            /*
             if(st.charAt(0) == '@'){
                 type = "variable";
                 String[] split = st.split(" ");
@@ -124,10 +147,7 @@ public class Pichy {
             if(st.startsWith("print")){
                 type = "print";
                 st = st.replaceFirst("print ", "");
-                for (Map.Entry<String, Object> e : variables.entrySet()) {
-                    if(st.contains(e.getKey()))
-                        st = st.replaceAll(e.getKey(),String.valueOf(e.getValue()));
-                }
+
                 if(st.charAt(st.length()-1) != ';') {
                     lastV = new StringBuilder(st);
                     lastN = "";
@@ -167,12 +187,21 @@ public class Pichy {
                     type = "";
                 }
             }
+
+             */
         }
     }
 
     public Pichy(String a, String b){
         System.out.println("a >"+a);
         System.out.println("b >"+b);
+    }
+    public static String checkVariables(String in){
+        for (Map.Entry<String, Object> e : variables.entrySet()) {
+            if(in.contains(e.getKey()))
+                in = in.replaceAll(e.getKey(),String.valueOf(e.getValue()));
+        }
+        return in;
     }
     public static Object isVariable(String key){
         return variables.get(key);
