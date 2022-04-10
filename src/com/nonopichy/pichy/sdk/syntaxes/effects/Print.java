@@ -1,4 +1,4 @@
-package com.nonopichy.pichy.sdk.syntaxes;
+package com.nonopichy.pichy.sdk.syntaxes.effects;
 
 import com.nonopichy.pichy.sdk.pichysyntax.PichySyntax;
 import com.nonopichy.pichy.sdk.pichysyntax.PichyType;

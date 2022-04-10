@@ -3,7 +3,11 @@ package com.nonopichy.pichy;
 import com.nonopichy.pichy.sdk.pichysyntax.PichyOut;
 import com.nonopichy.pichy.sdk.pichysyntax.PichySyntax;
 import com.nonopichy.pichy.sdk.pichysyntax.PichyType;
-import com.nonopichy.pichy.sdk.syntaxes.*;
+import com.nonopichy.pichy.sdk.syntaxes.effects.AlertBox;
+import com.nonopichy.pichy.sdk.syntaxes.effects.Print;
+import com.nonopichy.pichy.sdk.syntaxes.effects.WebSite;
+import com.nonopichy.pichy.sdk.syntaxes.returns.Address;
+import com.nonopichy.pichy.sdk.syntaxes.returns.MathPi;
 
 import java.io.*;
 import java.util.*;
@@ -43,9 +47,6 @@ public class Pichy {
                 else {
                     for (PichySyntax syntax : syntaxes) {
                         if (type.equals(syntax.getName())) {
-                            System.out.println("-->" + result);
-                            System.out.println("-->" + checkVariables(result));
-
                             if (syntax.getType() == PichyType.EFFECT) {
                                 syntax.playEffect(checkVariables(result));
                             }

@@ -1,14 +1,12 @@
-package com.nonopichy.pichy.sdk.syntaxes;
+package com.nonopichy.pichy.sdk.syntaxes.returns;
 
 import com.nonopichy.pichy.sdk.pichysyntax.PichySyntax;
 import com.nonopichy.pichy.sdk.pichysyntax.PichyType;
 
-import java.net.InetAddress;
-
-public class Address implements PichySyntax {
+public class MathPi implements PichySyntax {
     @Override
     public String getName() {
-        return "machine-ip";
+        return "3.1415";
     }
 
     @Override
@@ -27,10 +25,6 @@ public class Address implements PichySyntax {
 
     @Override
     public Object playReturn(String in) {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (Exception e){
-            return "0.0.0.0";
-        }
+        return Math.PI;
     }
 }

@@ -1,14 +1,14 @@
-package com.nonopichy.pichy.sdk.syntaxes;
+package com.nonopichy.pichy.sdk.syntaxes.effects;
 
 import com.nonopichy.pichy.sdk.pichysyntax.PichySyntax;
 import com.nonopichy.pichy.sdk.pichysyntax.PichyType;
 
 import javax.swing.*;
 
-public class AlertBox implements PichySyntax {
+public class WebSite implements PichySyntax {
     @Override
     public String getName() {
-        return "alertbox";
+        return "website";
     }
 
     @Override
@@ -23,7 +23,12 @@ public class AlertBox implements PichySyntax {
 
     @Override
     public void playEffect(String in){
-        JOptionPane.showMessageDialog(null, in);
+        Runtime rt = Runtime.getRuntime();
+        try {
+            rt.exec("rundll32 url.dll,FileProtocolHandler " + in);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
